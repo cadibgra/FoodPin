@@ -75,17 +75,26 @@ class RestaurantTableViewController: UITableViewController {
     }
     */
 
-    /*
-    // Override to support editing the table view.
+    
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             // Delete the row from the data source
+            restaurantIsVisited.removeAtIndex(indexPath.row)
+            restaurantLocations.removeAtIndex(indexPath.row)
+            restaurantNames.removeAtIndex(indexPath.row)
+            restaurantTypes.removeAtIndex(indexPath.row)
+            restaurantImages.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
+        //Print restaurant names after this method execution
+        print("Total restaurants: \(restaurantNames.count)")
+        for name in restaurantNames {
+            print(name)
+        }
     }
-    */
+
 
     /*
     // Override to support rearranging the table view.
@@ -149,5 +158,34 @@ class RestaurantTableViewController: UITableViewController {
         self.presentViewController(optionMenu, animated: true, completion: nil)
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
-
+    
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        //Social sharing button
+        let shareAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Share", handler: {
+            (action, indexPath) -> Void in
+            let defaultText = "Just checking in at" + self.restaurantNames[indexPath.row]
+            if let imageToShare = UIImage(named: self.restaurantImages[indexPath.row]) {
+                let activityController = UIActivityViewController(activityItems: [defaultText, imageToShare], applicationActivities: nil)
+                self.presentViewController(activityController, animated: true, completion: nil)
+            }
+            let activityController = UIActivityViewController(activityItems: [defaultText], applicationActivities: nil)
+            self.presentViewController(activityController, animated: true, completion: nil)
+        })
+        shareAction.backgroundColor = UIColor(red: 28.0/255.0, green: 165.0/255.0, blue: 253.0/255.0, alpha: 1.0)
+        
+        //Delete button
+        let deleteAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Delete", handler: {
+            (action, indexPath) -> Void in
+            self.restaurantIsVisited.removeAtIndex(indexPath.row)
+            self.restaurantLocations.removeAtIndex(indexPath.row)
+            self.restaurantNames.removeAtIndex(indexPath.row)
+            self.restaurantTypes.removeAtIndex(indexPath.row)
+            self.restaurantImages.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            //Delete the row from the data source
+            
+        })
+        deleteAction.backgroundColor = UIColor(red: 202.0/255.0, green: 202.0/255.0, blue: 203.0/255.0, alpha: 1.0)
+        return [deleteAction, shareAction]
+    }
 }
